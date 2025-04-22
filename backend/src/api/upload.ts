@@ -1,9 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+// Gunakan ENV agar aman saat deploy ke Vercel
 const supabase = createClient(
-  'https://jmmqpqbpdmaelfnjhgly.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' // pakai anon key yang benar
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
 );
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -17,18 +18,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Missing file or filename' });
   }
 
-  const buffer = Buffer.from(file, 'base64');
+  try {
+    const buffer = Buffer.from(file, 'base64');
 
-  const { data, error } = await supabase.storage
-    .from('flyers')
-    .upload(filename, buffer, {
-      contentType: 'image/png',
-      upsert: true,
-    });
+    const { data, error } = await supabase.storage
+      .from('avatars') // Pastikan nama bucket di Supabase = "avatars"
+      .upload(filename, buffer, {
+        contentType: 'image/png',
+        upsert: true,
+      });
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json({ message: 'Upload successful', path: data.path });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Upload failed' });
   }
-
-  res.status(200).json({ message: 'Uploaded', path: data?.path });
 }

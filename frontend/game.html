@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game - WordGameBoard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #edf2f7;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .header {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .header div {
+      font-size: 1rem;
+    }
+    .game-box {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .game-box h2 {
+      margin: 0 0 10px 0;
+    }
+    #mainWord {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    input, button {
+      padding: 10px;
+      margin-bottom: 10px;
+      width: calc(100% - 22px);
+      border: 1px solid #cbd5e0;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    button {
+      background: #4299e1;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #3182ce;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    li {
+      background: #f7fafc;
+      padding: 8px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>Player: <span id="playerName"></span></div>
+    <div>Points: <span id="playerPoints">0</span></div>
+    <div><a href="login.html">Logout</a></div>
+  </div>
+
+  <div class="game-box">
+    <h2>WordGameBoard</h2>
+    <div id="mainWord">BOOK</div>
+    <input type="text" id="wordInput" placeholder="Tulis kata..." />
+    <button id="btnSubmit">Submit</button>
+    <ul id="wordList"></ul>
+  </div>
+
+  <script>
+    const playerName = localStorage.getItem('username');
+    const playerPoints = localStorage.getItem('points') || '0';
+    if (!playerName) location.href = 'login.html';
+    document.getElementById('playerName').textContent = playerName;
+    document.getElementById('playerPoints').textContent = playerPoints;
+
+    const wordList = document.getElementById('wordList');
+    document.getElementById('btnSubmit').addEventListener('click', async () => {
+      const word = document.getElementById('wordInput').value.trim();
+      if (!word) return alert('Masukkan kata!');
+      const res = await fetch('/api/game', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify({ word })
+      });
+      const json = await res.json();
+      if (!res.ok) return alert(json.error || 'Error');
+      const li = document.createElement('li');
+      li.textContent = word;
+      wordList.appendChild(li);
+      document.getElementById('playerPoints').textContent = json.points;
+      localStorage.setItem('points', json.points);
+      document.getElementById('wordInput').value = '';
+    });
+  </script>
+</body>
+</html>

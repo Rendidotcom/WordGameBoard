@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload File ke Supabase</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 40px;
+    }
+    h1 {
+      color: #333;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    input[type="file"] {
+      display: block;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #0070f3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Upload File ke Supabase</h1>
+  <form id="uploadForm">
+    <input type="file" id="fileInput" required />
+    <button type="submit">Upload</button>
+    <div id="status"></div>
+  </form>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const file = fileInput.files[0];
+      if (!file) {
+        status.textContent = 'Pilih file dulu ya!';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      status.textContent = 'Mengunggah...';
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          status.textContent = '✅ Berhasil diunggah ke Supabase!';
+          console.log(result);
+        } else {
+          status.textContent = '❌ Gagal unggah: ' + result.error;
+        }
+      } catch (err) {
+        status.textContent = '❌ Terjadi error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from 'vercel';
 
-// Gunakan ENV agar aman saat deploy ke Vercel
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_ANON_KEY!
@@ -22,7 +21,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const buffer = Buffer.from(file, 'base64');
 
     const { data, error } = await supabase.storage
-      .from('avatars') // Pastikan nama bucket di Supabase = "avatars"
+      .from('avatars') // Ganti sesuai nama bucket kamu
       .upload(filename, buffer, {
         contentType: 'image/png',
         upsert: true,

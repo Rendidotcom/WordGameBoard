@@ -73,9 +73,15 @@
   <script>
     document.getElementById("register-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const username = document.getElementById("username").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // Validasi input
+      if (!username || !email || !password) {
+        alert("Semua kolom wajib diisi.");
+        return;
+      }
 
       try {
         const response = await fetch("/api/register", {
@@ -88,13 +94,13 @@
 
         if (response.ok) {
           alert("Registrasi berhasil, silakan login");
-          window.location.href = "login.html";
+          window.location.href = "login.html";  // Arahkan ke halaman login setelah registrasi sukses
         } else {
           alert(result.error || "Registrasi gagal");
         }
       } catch (err) {
-        alert("Terjadi kesalahan pada server.");
         console.error(err);
+        alert("Terjadi kesalahan saat menghubungi server.");
       }
     });
   </script>

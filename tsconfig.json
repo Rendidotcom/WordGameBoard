@@ -1,15 +1,17 @@
 {
-    "compilerOptions": {
-      "target": "ES2020",
-      "module": "ESNext",
-      "moduleResolution": "Node",
-      "outDir": "build",
-      "esModuleInterop": true,
-      "forceConsistentCasingInFileNames": true,
-      "strict": true,
-      "skipLibCheck": true
-    },
-    "include": ["backend/src/**/*"],
-    "exclude": ["build"]
-  }
-  
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist"
+  },
+  "include": [
+    "frontend/**/*"  // Tambahkan folder frontend agar file register.ts terkompilasi
+  ],
+  "exclude": [
+    "dist"  // Jangan kompilasi folder dist
+  ]
+}

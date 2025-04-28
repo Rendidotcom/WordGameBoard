@@ -6,12 +6,14 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "rootDir": "./frontend"     // <- Tambahan penting supaya struktur file tetap rapi
   },
   "include": [
-    "frontend/**/*"  // Tambahkan folder frontend agar file register.ts terkompilasi
+    "frontend/**/*"
   ],
   "exclude": [
-    "dist"  // Jangan kompilasi folder dist
+    "dist",
+    "node_modules"
   ]
 }

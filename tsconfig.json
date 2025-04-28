@@ -7,13 +7,16 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./frontend"     // <- Tambahan penting supaya struktur file tetap rapi
+    "rootDir": "./",  // Change rootDir to the root directory if you're using both frontend and backend
+    "moduleResolution": "node",  // Ensure module resolution works for Node.js
+    "resolveJsonModule": true  // This helps when you import .json files
   },
   "include": [
-    "frontend/**/*"
+    "backend/src/**/*",   // Include all files in the backend directory
+    "frontend/**/*"       // Include all files in the frontend directory
   ],
   "exclude": [
-    "dist",
-    "node_modules"
+    "dist",               // Exclude the dist folder
+    "node_modules"        // Exclude node_modules
   ]
 }

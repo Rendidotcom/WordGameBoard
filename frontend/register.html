@@ -84,19 +84,21 @@
       }
 
       try {
+        // Kirim data ke server API
         const response = await fetch("/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password })
+          body: JSON.stringify({ username, email, password }) // Kirimkan data sebagai JSON
         });
 
+        // Mengecek apakah respons dari server OK (status 200-299)
         const result = await response.json();
 
         if (response.ok) {
           alert("Registrasi berhasil, silakan login");
           window.location.href = "login.html";  // Arahkan ke halaman login setelah registrasi sukses
         } else {
-          alert(result.error || "Registrasi gagal");
+          alert(result.error || "Registrasi gagal"); // Menampilkan error jika gagal
         }
       } catch (err) {
         console.error(err);

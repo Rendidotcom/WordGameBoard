@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "ts-node --esm backend/src/server.ts",
     "build": "tsc",
-    "vercel-build": "npm run build"
+    "vercel-build": "npm run build",
+    "vercel": "vercel --prod"
+    
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",

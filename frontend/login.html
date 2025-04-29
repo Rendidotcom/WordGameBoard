@@ -84,11 +84,17 @@
           body: JSON.stringify({ email, password })
         });
 
-        const result = await response.json();
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (e) {
+          throw new Error(text);
+        }
 
         if (response.ok) {
           localStorage.setItem("token", result.token);
-          window.location.href = "/game.html"; // penting: kasih / di depan supaya dari root
+          window.location.href = "/game.html";
         } else {
           alert(result.message || "Login gagal");
         }

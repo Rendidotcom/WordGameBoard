@@ -9,50 +9,33 @@
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #43cea2, #185a9d);
       color: white;
-      margin: 0;
-      padding: 0;
       display: flex;
       flex-direction: column;
       height: 100vh;
+      margin: 0;
     }
-
     header {
-      background-color: rgba(0, 0, 0, 0.2);
       padding: 1rem;
       text-align: center;
-      font-size: 1.5rem;
     }
-
     main {
       flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-
     .board {
       background: #2d3748;
       padding: 2rem;
       border-radius: 1rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      min-width: 300px;
-      min-height: 200px;
-      text-align: center;
     }
-
     button {
-      margin-top: 1.5rem;
-      padding: 0.75rem 1.25rem;
-      border: none;
-      border-radius: 0.5rem;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
       background-color: #e53e3e;
       color: white;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #c53030;
+      border: none;
+      border-radius: 0.5rem;
     }
   </style>
 </head>
@@ -60,7 +43,6 @@
   <header>
     Selamat Datang di WordGameBoard!
   </header>
-
   <main>
     <div class="board">
       <h2>Game Dimulai!</h2>
@@ -70,14 +52,14 @@
   </main>
 
   <script>
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("user_id");
     if (!token) {
       alert("Silakan login terlebih dahulu.");
       window.location.href = "login.html";
     }
 
-    document.getElementById("logout-btn").addEventListener("click", () => {
-      localStorage.removeItem("token");
+    document.getElementById("logout-btn")?.addEventListener("click", () => {
+      localStorage.removeItem("user_id");
       window.location.href = "login.html";
     });
   </script>

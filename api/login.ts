@@ -1,12 +1,17 @@
+import { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabase } from './supabaseClient';
 
-export default async function handler(req: Request): Promise<Response> {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
-    return new Response('Method Not Allowed', { status: 405 });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    const { email, password } = await req.json();
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email dan password wajib diisi' });
+    }
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -14,18 +19,12 @@ export default async function handler(req: Request): Promise<Response> {
     });
 
     if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 401,
-      });
+      return res.status(401).json({ error: error.message });
     }
 
-    return new Response(JSON.stringify({ user: data.user }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return res.status(200).json({ user: data.user });
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
-      status: 500,
-    });
+    console.error('Login error:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }

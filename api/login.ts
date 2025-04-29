@@ -1,40 +1,31 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabase } from './supabaseClient';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
-
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
   try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('id, username, points, password')
-      .eq('email', email)
-      .single();
+    const { email, password } = await req.json();
 
-    if (error || !data) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 401,
+      });
     }
 
-    if (data.password !== password) {
-      return res.status(401).json({ message: 'Incorrect password' });
-    }
-
-    const { password: _, ...safeUser } = data;
-
-    const token = `${safeUser.id}-${Date.now()}`;
-
-    return res.status(200).json({ message: 'Login successful', token, user: safeUser });
-
+    return new Response(JSON.stringify({ user: data.user }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (err) {
-    console.error('Login error:', err);
-    return res.status(500).json({ message: 'Internal server error' });
+    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+      status: 500,
+    });
   }
 }

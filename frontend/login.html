@@ -84,19 +84,15 @@
           body: JSON.stringify({ email, password })
         });
 
-        const text = await response.text();
-        let result;
-        try {
-          result = JSON.parse(text);
-        } catch (e) {
-          throw new Error(text);
-        }
+        const result = await response.json();
 
         if (response.ok) {
-          localStorage.setItem("token", result.token);
-          window.location.href = "/game.html";
+          // Simpan ID pengguna dan token jika perlu
+          localStorage.setItem("user_id", result.user?.id || "");
+          alert("Login berhasil!");
+          window.location.href = "game.html";
         } else {
-          alert(result.message || "Login gagal");
+          alert(result.error || "Login gagal.");
         }
       } catch (error) {
         console.error("Terjadi kesalahan:", error);

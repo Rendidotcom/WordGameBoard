@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register - WordGameBoard</title>
+  <title>Daftar - WordGameBoard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #f6d365, #fda085);
+      background: linear-gradient(to right, #00c6ff, #0072ff);
       color: white;
       display: flex;
       justify-content: center;
@@ -38,13 +38,13 @@
       padding: 0.75rem;
       border: none;
       border-radius: 0.5rem;
-      background-color: #4299e1;
+      background-color: #48bb78;
       color: white;
       font-size: 1rem;
       cursor: pointer;
     }
     button:hover {
-      background-color: #3182ce;
+      background-color: #38a169;
     }
     .link {
       text-align: center;
@@ -58,9 +58,8 @@
 </head>
 <body>
   <div class="container">
-    <h2>Register</h2>
+    <h2>Daftar</h2>
     <form id="register-form">
-      <input type="text" id="username" placeholder="Username" required />
       <input type="email" id="email" placeholder="Email" required />
       <input type="password" id="password" placeholder="Password" required />
       <button type="submit">Daftar</button>
@@ -73,36 +72,35 @@
   <script>
     document.getElementById("register-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const username = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      // Validasi input
-      if (!username || !email || !password) {
-        alert("Semua kolom wajib diisi.");
-        return;
-      }
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
       try {
-        // Kirim data ke server API
         const response = await fetch("/api/register", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password }) // Kirimkan data sebagai JSON
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
         });
 
-        // Mengecek apakah respons dari server OK (status 200-299)
-        const result = await response.json();
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (e) {
+          throw new Error(text);
+        }
 
         if (response.ok) {
-          alert("Registrasi berhasil, silakan login");
-          window.location.href = "login.html";  // Arahkan ke halaman login setelah registrasi sukses
+          alert("Pendaftaran berhasil! Silakan login.");
+          window.location.href = "login.html";
         } else {
-          alert(result.error || "Registrasi gagal"); // Menampilkan error jika gagal
+          alert(result.message || "Pendaftaran gagal.");
         }
-      } catch (err) {
-        console.error(err);
-        alert("Terjadi kesalahan saat menghubungi server.");
+      } catch (error) {
+        console.error("Terjadi kesalahan:", error);
+        alert("Pendaftaran gagal. Coba lagi nanti.");
       }
     });
   </script>

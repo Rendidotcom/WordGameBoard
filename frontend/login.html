@@ -51,37 +51,28 @@
     </div>
   </div>
 
-  <script type="module">
-    document.getElementById("login-form")?.addEventListener("submit", async (e) => {
+  <script>
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = (document.getElementById("email") as HTMLInputElement).value;
-      const password = (document.getElementById("password") as HTMLInputElement).value;
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
 
       try {
-        const response = await fetch("/api/login", {
+        const res = await fetch("/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password })
         });
+        const data = await res.json();
 
-        let result;
-        try {
-          result = await response.json();
-        } catch (jsonError) {
-          const text = await response.text();
-          console.error("Server error (non-JSON):", text);
-          alert("Login gagal: " + text);
-          return;
-        }
-
-        if (response.ok) {
+        if (res.ok) {
+          localStorage.setItem("username", data.username || email);
           alert("Login berhasil! Selamat datang.");
-          window.location.href = "dashboard.html";
+          window.location.href = "/dashboard.html";
         } else {
-          alert(result.message || "Login gagal.");
+          alert(data.message || "Login gagal.");
         }
-      } catch (err) {
-        console.error("Fetch error:", err);
+      } catch {
         alert("Terjadi kesalahan jaringan.");
       }
     });

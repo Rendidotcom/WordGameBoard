@@ -1,71 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Word Game - WordGameBoard</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #edf2f7;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #2b6cb0;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-    }
-    .game-container {
-      background: white;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      max-width: 600px;
-      width: 100%;
-      text-align: center;
-    }
-    input[type="text"] {
-      width: 80%;
-      padding: 0.75rem;
-      margin: 1rem 0;
-      border: 1px solid #ccc;
-      border-radius: 0.5rem;
-    }
-    button {
-      padding: 0.75rem 1.5rem;
-      background-color: #3182ce;
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-    }
-    #result {
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordGameBoard</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Game Tebak Kata</h1>
-  </header>
-  <main>
-    <div class="game-container">
-      <p>Masukkan tebakanmu:</p>
-      <input type="text" id="guess" placeholder="Tebak kata..." />
-      <button id="submit">Kirim</button>
-      <div id="result"></div>
-    </div>
-  </main>
+    <h1>WordGameBoard</h1>
 
-  <script type="module" src="game.js"></script>
+    <div id="grid-container"></div>
+    <button id="next-turn">Next Turn</button>
+    <div id="current-player">Player 1's Turn</div>
+    <div id="player-scores">
+        <p>Player 1: <span id="score-player1">0</span></p>
+        <p>Player 2: <span id="score-player2">0</span></p>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

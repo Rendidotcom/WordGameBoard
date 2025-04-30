@@ -1,47 +1,39 @@
-export const config = {
-  runtime: 'edge',
-};
+// C:\Users\rendi\Documents\coding\WordGameBoard\api\login.ts
+import { VercelRequest, VercelResponse } from '@vercel/node'
+import { createClient } from '@supabase/supabase-js'
 
-import { supabase } from './supabaseClient';
+// Ganti dengan env aslimu jika belum
+const supabase = createClient(
+  process.env.SUPABASE_URL || 'https://your-project.supabase.co',
+  process.env.SUPABASE_ANON_KEY || 'your-anon-key'
+)
 
-export default async function handler(req: Request): Promise<Response> {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ message: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return res.status(405).json({ message: 'Method Not Allowed' })
   }
 
-  try {
-    const body = await req.json();
+  const { email, password } = req.body
 
-    if (!body.email || !body.password) {
-      return new Response(JSON.stringify({ message: 'Email dan password diperlukan.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const { email, password } = body;
-
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error || !data.user) {
-      return new Response(JSON.stringify({ message: error?.message || 'Login gagal.' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    return new Response(JSON.stringify({ user: data.user, username: data.user.email }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (err: any) {
-    console.error('Login error:', err);
-    return new Response(JSON.stringify({ message: 'Server error: ' + err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email dan password wajib diisi' })
   }
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  })
+
+  if (error || !data.session) {
+    return res.status(401).json({ message: error?.message || 'Login gagal' })
+  }
+
+  return res.status(200).json({
+    message: 'Login berhasil',
+    token: data.session.access_token,
+    user: {
+      id: data.user.id,
+      email: data.user.email
+    }
+  })
 }

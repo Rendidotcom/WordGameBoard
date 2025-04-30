@@ -1,30 +1,43 @@
-import { login } from './login';
-import { register } from './register';
-import { startGame, endGame } from './game';
+// index.ts
+declare const supabase: any;
 
-// Ganti dengan email dan password yang valid untuk testing manual
-const email = 'user@example.com';
-const password = 'securepassword123';
-
-async function main() {
+async function fetchUser(): Promise<void> {
+  const response = await fetch("/api/user");
   try {
-    console.log('📌 Mendaftarkan user...');
-    const regData = await register(email, password);
-    console.log('✅ Registrasi sukses:', regData);
-
-    console.log('📌 Login user...');
-    const loginData = await login(email, password);
-    console.log('✅ Login sukses:', loginData);
-
-    console.log('▶️ Mulai game...');
-    startGame();
-
-    console.log('⏹️ Selesai game...');
-    endGame();
-
-  } catch (error) {
-    console.error('❌ Terjadi kesalahan:', error);
+    const result = await response.json();
+    if (response.ok) {
+      const userEmail = result.email || "Pengguna";
+      const messageEl = document.getElementById("welcome-message");
+      if (messageEl) {
+        messageEl.textContent = `Halo, ${userEmail}!`;
+      }
+    } else {
+      alert("Gagal mendapatkan data user. Silakan login ulang.");
+      window.location.href = "login.html";
+    }
+  } catch (err) {
+    console.error("Gagal parsing data user:", err);
+    window.location.href = "login.html";
   }
 }
 
-main();
+async function logout(): Promise<void> {
+  const response = await fetch("/api/logout", {
+    method: "POST"
+  });
+
+  if (response.ok) {
+    window.location.href = "login.html";
+  } else {
+    alert("Logout gagal.");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  fetchUser();
+
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", logout);
+  }
+});

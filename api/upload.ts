@@ -1,38 +1,76 @@
-import { createClient } from '@supabase/supabase-js';
-import type { VercelRequest, VercelResponse } from 'vercel';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { file, filename } = req.body;
-
-  if (!file || !filename) {
-    return res.status(400).json({ error: 'Missing file or filename' });
-  }
-
+async function checkUser(): Promise<string | null> {
   try {
-    const buffer = Buffer.from(file, 'base64');
-
-    const { data, error } = await supabase.storage
-      .from('avatars') // Ganti sesuai nama bucket kamu
-      .upload(filename, buffer, {
-        contentType: 'image/png',
-        upsert: true,
-      });
-
-    if (error) {
-      return res.status(500).json({ error: error.message });
+    const response = await fetch("/api/user");
+    if (!response.ok) {
+      window.location.href = "login.html";
+      return null;
     }
-
-    return res.status(200).json({ message: 'Upload successful', path: data.path });
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message || 'Upload failed' });
+    const data = await response.json();
+    return data.user?.id || null;
+  } catch (err) {
+    console.error("Gagal mengecek user:", err);
+    window.location.href = "login.html";
+    return null;
   }
 }
+
+function previewImage(file: File): void {
+  const preview = document.getElementById("preview") as HTMLImageElement;
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      preview.src = reader.result as string;
+      preview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  } else {
+    preview.src = "";
+    preview.style.display = "none";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const userId = await checkUser();
+  if (!userId) return;
+
+  const fileInput = document.getElementById("file-input") as HTMLInputElement;
+  const uploadButton = document.getElementById("upload-button") as HTMLButtonElement;
+  const messageDiv = document.getElementById("message") as HTMLDivElement;
+
+  if (fileInput && uploadButton && messageDiv) {
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files?.[0];
+      if (file) previewImage(file);
+    });
+
+    uploadButton.addEventListener("click", async () => {
+      const file = fileInput.files?.[0];
+      if (!file) {
+        alert("Pilih gambar terlebih dahulu.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", userId);
+
+      try {
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          messageDiv.innerHTML = `✅ Upload berhasil!<br><a href="${result.url}" target="_blank">Lihat gambar</a>`;
+        } else {
+          const errorText = await response.text();
+          messageDiv.textContent = `❌ Upload gagal: ${errorText}`;
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+        messageDiv.textContent = "❌ Upload error.";
+      }
+    });
+  }
+});

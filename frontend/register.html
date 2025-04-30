@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Daftar - WordGameBoard</title>
+  <title>Register - WordGameBoard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -29,7 +29,7 @@
       border: none;
     }
     button {
-      background-color: #48bb78;
+      background-color: #4299e1;
       color: white;
       cursor: pointer;
     }
@@ -40,7 +40,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>Daftar</h2>
+    <h2>Register</h2>
     <form id="register-form">
       <input type="email" id="email" placeholder="Email" required />
       <input type="password" id="password" placeholder="Password" required />
@@ -54,8 +54,8 @@
   <script type="module">
     document.getElementById("register-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const email = (document.getElementById("email") as HTMLInputElement).value;
+      const password = (document.getElementById("password") as HTMLInputElement).value;
 
       try {
         const response = await fetch("/api/register", {
@@ -64,7 +64,16 @@
           body: JSON.stringify({ email, password })
         });
 
-        const result = await response.json();
+        let result;
+        try {
+          result = await response.json();
+        } catch (jsonError) {
+          const text = await response.text();
+          console.error("Server error (non-JSON):", text);
+          alert("Pendaftaran gagal: " + text);
+          return;
+        }
+
         if (response.ok) {
           alert("Pendaftaran berhasil! Silakan login.");
           window.location.href = "login.html";
@@ -72,8 +81,8 @@
           alert(result.message || "Pendaftaran gagal.");
         }
       } catch (err) {
-        alert("Pendaftaran gagal.");
-        console.error(err);
+        console.error("Fetch error:", err);
+        alert("Terjadi kesalahan jaringan.");
       }
     });
   </script>

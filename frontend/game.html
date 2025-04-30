@@ -3,65 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Game - WordGameBoard</title>
+  <title>Word Game - WordGameBoard</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #43cea2, #185a9d);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #edf2f7;
       margin: 0;
+      padding: 0;
     }
     header {
+      background: #2b6cb0;
+      color: white;
       padding: 1rem;
       text-align: center;
     }
     main {
-      flex: 1;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      padding: 2rem;
     }
-    .board {
-      background: #2d3748;
+    .game-container {
+      background: white;
       padding: 2rem;
       border-radius: 1rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 0.75rem;
+      margin: 1rem 0;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
     }
     button {
-      margin-top: 1rem;
       padding: 0.75rem 1.5rem;
-      background-color: #e53e3e;
+      background-color: #3182ce;
       color: white;
       border: none;
       border-radius: 0.5rem;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 1rem;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
   <header>
-    Selamat Datang di WordGameBoard!
+    <h1>Game Tebak Kata</h1>
   </header>
   <main>
-    <div class="board">
-      <h2>Game Dimulai!</h2>
-      <p>Ini adalah tempat permainanmu. Selamat bermain.</p>
-      <button id="logout-btn">Logout</button>
+    <div class="game-container">
+      <p>Masukkan tebakanmu:</p>
+      <input type="text" id="guess" placeholder="Tebak kata..." />
+      <button id="submit">Kirim</button>
+      <div id="result"></div>
     </div>
   </main>
 
-  <script>
-    const token = localStorage.getItem("user_id");
-    if (!token) {
-      alert("Silakan login terlebih dahulu.");
-      window.location.href = "login.html";
-    }
-
-    document.getElementById("logout-btn")?.addEventListener("click", () => {
-      localStorage.removeItem("user_id");
-      window.location.href = "login.html";
-    });
-  </script>
+  <script type="module" src="game.js"></script>
 </body>
 </html>

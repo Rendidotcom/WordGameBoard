@@ -1,87 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upload File ke Supabase</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Gambar - WordGameBoard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      padding: 40px;
+      background: linear-gradient(to right, #36d1dc, #5b86e5);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    h1 {
-      color: #333;
-    }
-    form {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    .container {
+      background-color: #2d3748;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 320px;
+      text-align: center;
     }
     input[type="file"] {
-      display: block;
-      margin-bottom: 15px;
+      margin: 1rem 0;
+      color: white;
     }
     button {
-      padding: 10px 20px;
-      background: #0070f3;
-      color: white;
+      padding: 0.75rem;
+      background-color: #48bb78;
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #status {
-      margin-top: 15px;
+      border-radius: 0.5rem;
+      color: white;
       font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      display: none;
+    }
+    #message {
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <h1>Upload File ke Supabase</h1>
-  <form id="uploadForm">
-    <input type="file" id="fileInput" required />
-    <button type="submit">Upload</button>
-    <div id="status"></div>
-  </form>
+  <div class="container">
+    <h2>Upload Gambar</h2>
+    <input type="file" id="file-input" accept="image/*" />
+    <button id="upload-button">Upload</button>
+    <div id="message"></div>
+    <img id="preview" src="" alt="Preview Gambar" />
+  </div>
 
-  <script>
-    const form = document.getElementById('uploadForm');
-    const fileInput = document.getElementById('fileInput');
-    const status = document.getElementById('status');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const file = fileInput.files[0];
-      if (!file) {
-        status.textContent = 'Pilih file dulu ya!';
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('file', file);
-
-      status.textContent = 'Mengunggah...';
-
-      try {
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        });
-
-        const result = await response.json();
-        if (response.ok) {
-          status.textContent = '✅ Berhasil diunggah ke Supabase!';
-          console.log(result);
-        } else {
-          status.textContent = '❌ Gagal unggah: ' + result.error;
-        }
-      } catch (err) {
-        status.textContent = '❌ Terjadi error: ' + err.message;
-      }
-    });
-  </script>
+  <script type="module" src="upload.js"></script>
 </body>
 </html>

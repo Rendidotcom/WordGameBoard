@@ -3,43 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WordGameBoard - Selamat Datang</title>
+  <title>Dashboard - WordGameBoard</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #ff9966, #ff5e62);
-      color: white;
-      display: flex;
-      height: 100vh;
-      justify-content: center;
-      align-items: center;
+      font-family: Arial, sans-serif;
+      background: #f7fafc;
+      color: #2d3748;
       margin: 0;
+      padding: 0;
     }
-    .container {
-      background-color: rgba(0, 0, 0, 0.4);
-      padding: 2rem;
-      border-radius: 1rem;
+    header {
+      background: #2b6cb0;
+      color: white;
+      padding: 1rem;
       text-align: center;
     }
-    .buttons a {
-      display: inline-block;
-      margin: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background-color: #3182ce;
+    main {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    button {
+      background-color: #e53e3e;
       color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
       border-radius: 0.5rem;
-      text-decoration: none;
+      cursor: pointer;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <header>
     <h1>Selamat Datang di WordGameBoard</h1>
-    <p>Uji pengetahuan kata dan keterampilanmu dalam permainan kata yang seru!</p>
-    <div class="buttons">
-      <a href="login.html">Login</a>
-      <a href="register.html">Daftar</a>
+  </header>
+  <main>
+    <div class="card">
+      <h2 id="welcome-message">Memuat data pengguna...</h2>
+      <button id="logout-btn">Logout</button>
     </div>
-  </div>
+  </main>
+
+  <script type="module" src="index.js"></script>
 </body>
 </html>

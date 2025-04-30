@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 1000);
 
   logoutBtn.addEventListener("click", () => {
-    const audio = new Audio("/audio/klik.mp3");
+    const audio = new Audio("/klik.mp3");
     audio.play().catch((err) => console.warn("Audio error:", err));
 
     // Simulasi logout

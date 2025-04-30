@@ -72,7 +72,8 @@
         } else {
           alert(data.message || "Login gagal.");
         }
-      } catch {
+      } catch (err) {
+        console.error("Network error:", err);
         alert("Terjadi kesalahan jaringan.");
       }
     });

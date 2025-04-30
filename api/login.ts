@@ -1,4 +1,3 @@
-// login.ts
 import { supabase } from './supabaseClient';
 
 export default async function handler(req: Request): Promise<Response> {
@@ -10,7 +9,9 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   try {
-    const { email, password } = await req.json();
+    const body = await req.json();
+    const email = body.email;
+    const password = body.password;
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -21,7 +22,7 @@ export default async function handler(req: Request): Promise<Response> {
       });
     }
 
-    return new Response(JSON.stringify({ user: data.user }), {
+    return new Response(JSON.stringify({ user: data.user, username: data.user?.email }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

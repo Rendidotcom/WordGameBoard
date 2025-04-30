@@ -1,8 +1,8 @@
-import { supabase } from './supabaseClient';
-
 export const config = {
-  runtime: 'edge', // Wajib untuk deployment di Vercel jika error FUNCTION_INVOCATION_FAILED
+  runtime: 'edge',
 };
+
+import { supabase } from './supabaseClient';
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') {
@@ -14,14 +14,15 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     const body = await req.json();
-    const { email, password } = body;
 
-    if (!email || !password) {
+    if (!body.email || !body.password) {
       return new Response(JSON.stringify({ message: 'Email dan password diperlukan.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
+
+    const { email, password } = body;
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -32,16 +33,13 @@ export default async function handler(req: Request): Promise<Response> {
       });
     }
 
-    return new Response(
-      JSON.stringify({ user: data.user, username: data.user.email }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return new Response(JSON.stringify({ user: data.user, username: data.user.email }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (err: any) {
-    console.error('Login error:', err.message || err);
-    return new Response(JSON.stringify({ message: 'Server error: ' + (err.message || err) }), {
+    console.error('Login error:', err);
+    return new Response(JSON.stringify({ message: 'Server error: ' + err.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

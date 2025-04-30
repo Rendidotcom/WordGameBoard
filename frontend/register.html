@@ -1,74 +1,80 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register - WordGameBoard</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>Daftar Akun</h1>
-      <p>Mulai perjalananmu dengan mendaftar di WordGameBoard!</p>
-    </header>
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f2f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
 
-    <form id="registerForm" class="form">
-      <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Username" required /><br />
+.container {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+}
 
-      <label for="email">Email</label>
-      <input type="email" id="email" placeholder="Email" required /><br />
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  text-align: center;
+}
 
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Password" required /><br />
+header p {
+  text-align: center;
+  color: #555;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
 
-      <button type="submit" class="btn">Daftar</button>
-    </form>
+.form label {
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
+  color: #333;
+}
 
-    <div class="navigation">
-      <p>Sudah punya akun? <a href="login.html">Masuk di sini</a></p>
-      <p>Atau pergi ke <a href="dashboard.html">Dashboard</a></p>
-    </div>
-  </div>
+.form input {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+.btn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-    const supabaseUrl = ''
-    const supabaseKey = ''
-    const supabase = createClient(supabaseUrl, supabaseKey)
+.btn:hover {
+  background-color: #4338ca;
+}
 
-    const form = document.getElementById('registerForm')
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault()
+.navigation {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+}
 
-      const username = document.getElementById('username').value
-      const email = document.getElementById('email').value
-      const password = document.getElementById('password').value
+.navigation a {
+  color: #4f46e5;
+  text-decoration: none;
+}
 
-      const { error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-      })
-
-      if (authError) {
-        alert('Gagal daftar: ' + authError.message)
-        return
-      }
-
-      const { error: dbError } = await supabase
-        .from('WordGameBoard')
-        .insert([{ username, email, password, points: 0 }])
-
-      if (dbError) {
-        alert('Gagal simpan data: ' + dbError.message)
-        return
-      }
-
-      alert('Pendaftaran berhasil!')
-      form.reset()
-    })
-  </script>
-</body>
-</html>
+.navigation a:hover {
+  text-decoration: underline;
+}

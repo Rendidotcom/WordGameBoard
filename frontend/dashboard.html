@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard - WordGameBoard</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/style.css" />
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -73,33 +73,33 @@
 
   <!-- Koneksi antar script -->
   <script type="module">
-    import { supabase } from '../config/supabaseConfig.js';
+    import { supabase } from '/supabaseConfig.js';
 
-    // Autentikasi dan ambil data pengguna
-    const user = await supabase.auth.getUser();
-    if (user.data.user) {
-      document.getElementById('welcome-message').textContent =
-        `Halo, ${user.data.user.email}`;
-    } else {
-      window.location.href = 'login.html';
-    }
+    document.addEventListener('DOMContentLoaded', async () => {
+      const { data: { user } } = await supabase.auth.getUser();
 
-    // Logout
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-      await supabase.auth.signOut();
-      window.location.href = 'login.html';
-    });
+      if (user) {
+        document.getElementById('welcome-message').textContent =
+          `Halo, ${user.email}`;
+      } else {
+        window.location.href = 'login.html';
+      }
 
-    // Mulai game
-    document.getElementById('start-game-btn').addEventListener('click', () => {
-      initializeGame(); // dipanggil dari script.js
+      document.getElementById('logout-btn').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
+      });
+
+      document.getElementById('start-game-btn').addEventListener('click', () => {
+        initializeGame(); // Pastikan ini didefinisikan di script.js
+      });
     });
   </script>
 
   <!-- Game Scripts -->
-  <script type="module" src="/frontend/grid.js"></script>
-  <script type="module" src="/frontend/board.js"></script>
-  <script type="module" src="/frontend/scoreBoard.js"></script>
-  <script type="module" src="/frontend/script.js"></script>
+  <script type="module" src="/grid.js"></script>
+  <script type="module" src="/board.js"></script>
+  <script type="module" src="/scoreBoard.js"></script>
+  <script type="module" src="/script.js"></script>
 </body>
 </html>

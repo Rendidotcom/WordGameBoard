@@ -1,22 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordGameBoard</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WordGameBoard</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>WordGameBoard</h1>
+  <div id="game-container">
+    <div id="score-board"></div>
+    <div id="game-board"></div>
+  </div>
 
-    <div id="grid-container"></div>
-    <button id="next-turn">Next Turn</button>
-    <div id="current-player">Player 1's Turn</div>
-    <div id="player-scores">
-        <p>Player 1: <span id="score-player1">0</span></p>
-        <p>Player 2: <span id="score-player2">0</span></p>
-    </div>
-
-    <script src="script.js"></script>
+  <script type="module" src="./script.js"></script>
 </body>
 </html>

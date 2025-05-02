@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard - WordGameBoard</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="./styles.css" />
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -71,9 +71,9 @@
     </div>
   </main>
 
-  <!-- Koneksi antar script -->
+  <!-- Supabase Client -->
   <script type="module">
-    import { supabase } from '/supabaseConfig.js';
+    import { supabase } from '../api/supabaseClient.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -85,21 +85,21 @@
         window.location.href = 'login.html';
       }
 
-      document.getElementById('logout-btn').addEventListener('click', async () => {
+      document.getElementById('logout-btn')?.addEventListener('click', async () => {
         await supabase.auth.signOut();
         window.location.href = 'login.html';
       });
 
-      document.getElementById('start-game-btn').addEventListener('click', () => {
-        initializeGame(); // Pastikan ini didefinisikan di script.js
+      document.getElementById('start-game-btn')?.addEventListener('click', () => {
+        initializeGame();
       });
     });
   </script>
 
   <!-- Game Scripts -->
-  <script type="module" src="/grid.js"></script>
-  <script type="module" src="/board.js"></script>
-  <script type="module" src="/scoreBoard.js"></script>
-  <script type="module" src="/script.js"></script>
+  <script type="module" src="./components/grid.js"></script>
+  <script type="module" src="./components/board.js"></script>
+  <script type="module" src="./components/scoreBoard.js"></script>
+  <script type="module" src="./script.js"></script>
 </body>
 </html>

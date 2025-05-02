@@ -37,18 +37,12 @@
   <script type="module" src="./components/grid.js"></script>
   <script type="module" src="./components/board.js"></script>
   <script type="module" src="./components/scoreBoard.js"></script>
-  <script type="module" src="/frontend/supabaseClient.js"></script>
+  <script type="module" src="./supabaseClient.js"></script>
+
   <script type="module">
     import { initBoard } from './components/board.js';
     import { updateScoreBoard } from './components/scoreBoard.js';
-
-    import { supabase } from '../api/supabaseClient.js';
-
-    const API = {
-      register: '/api/register',
-      login: '/api/login',
-      updateScore: '/api/points/update',
-    };
+    import { supabase } from './supabaseClient.js';
 
     const authDiv = document.getElementById('auth');
     const gameDiv = document.getElementById('game');
@@ -64,39 +58,52 @@
       const email = document.getElementById('reg-email').value;
       const password = document.getElementById('reg-pass').value;
 
-      const res = await fetch(API.register, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password }),
-      });
-      const data = await res.json();
-      alert(data.message || 'Registration successful');
+      const { data, error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      // Simpan data ke tabel ProfileScores
+      await supabase
+        .from('ProfileScores')
+        .insert([{ id: data.user.id, username, points: 0 }]);
+
+      alert('Registration successful! You can now log in.');
     }
 
     async function login() {
       const email = document.getElementById('log-email').value;
       const password = document.getElementById('log-pass').value;
 
-      const res = await fetch(API.login, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-      const json = await res.json();
-      if (res.ok) {
-        currentUser = json.user;
-        startGame();
-      } else {
-        alert(json.error || 'Login failed');
+      if (error) {
+        alert(error.message);
+        return;
       }
+
+      const { data: profile, error: profileError } = await supabase
+        .from('ProfileScores')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profileError) {
+        alert('Failed to load profile');
+        return;
+      }
+
+      currentUser = profile;
+      startGame();
     }
 
     function startGame() {
       authDiv.classList.add('hidden');
       gameDiv.classList.remove('hidden');
       uname.textContent = currentUser.username;
-      upoints.textContent = currentUser.points.toString();
+      upoints.textContent = currentUser.points;
       initBoard('board-container');
     }
 
@@ -107,30 +114,32 @@
 
     async function updateScore() {
       if (!currentUser) return;
+
       const word = wordInput.value.trim();
       if (!word) return alert('Please enter a word');
+
       const isValid = await validateWord(word);
       if (!isValid) return alert('Invalid word!');
 
       const points = word.length;
 
-      const res = await fetch(API.updateScore, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: currentUser.id, points }),
-      });
+      const { error } = await supabase
+        .from('ProfileScores')
+        .update({ points: currentUser.points + points })
+        .eq('id', currentUser.id);
 
-      const data = await res.json();
-      if (res.ok) {
-        currentUser.points += points;
-        updateScoreBoard(currentUser.username, currentUser.points);
-        const li = document.createElement('li');
-        li.textContent = `Word: ${word} | +${points} Points`;
-        wlist.appendChild(li);
-        wordInput.value = '';
-      } else {
+      if (error) {
         alert('Failed to update score');
+        return;
       }
+
+      currentUser.points += points;
+      updateScoreBoard(currentUser.username, currentUser.points);
+
+      const li = document.createElement('li');
+      li.textContent = `Word: ${word} | +${points} Points`;
+      wlist.appendChild(li);
+      wordInput.value = '';
     }
 
     document.getElementById('btn-register').addEventListener('click', register);

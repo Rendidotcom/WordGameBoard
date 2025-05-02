@@ -11,13 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const API = {
     register: '/api/register',
     login: '/api/login',
+    updateScore: '/api/points/update' // Endpoint untuk memperbarui skor
 };
 const authDiv = document.getElementById('auth');
 const gameDiv = document.getElementById('game');
 const uname = document.getElementById('user-name');
 const upoints = document.getElementById('user-points');
 const wlist = document.getElementById('word-list');
+const wordInput = document.getElementById('word-input');
 let currentUser = null;
+// Fungsi untuk registrasi pengguna baru
 function register() {
     return __awaiter(this, void 0, void 0, function* () {
         const username = document.getElementById('reg-username').value;
@@ -28,9 +31,11 @@ function register() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, email, password })
         });
-        alert((yield res.json()).message || 'Done');
+        const data = yield res.json();
+        alert(data.message || 'Registration successful');
     });
 }
+// Fungsi untuk login pengguna
 function login() {
     return __awaiter(this, void 0, void 0, function* () {
         const email = document.getElementById('log-email').value;
@@ -50,19 +55,54 @@ function login() {
         }
     });
 }
+// Fungsi untuk memulai permainan setelah login
 function startGame() {
     authDiv.classList.add('hidden');
     gameDiv.classList.remove('hidden');
     uname.textContent = currentUser.username;
     upoints.textContent = currentUser.points.toString();
 }
-function submitWord() {
-    const word = document.getElementById('word-input').value;
-    const li = document.createElement('li');
-    li.textContent = word;
-    wlist.appendChild(li);
-    // belum update poin—bisa ditambahkan endpoint points/update nanti
+// Fungsi untuk memvalidasi kata menggunakan API kamus
+function validateWord(word) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+        return response.ok; // Jika status OK, kata valid
+    });
 }
+// Fungsi untuk memperbarui skor pemain
+function updateScore() {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!currentUser)
+            return;
+        const word = wordInput.value.trim();
+        if (word && (yield validateWord(word))) {
+            const points = word.length; // Skor dihitung berdasarkan panjang kata
+            // Update user points di server
+            const res = yield fetch(API.updateScore, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: currentUser.id, points })
+            });
+            const data = yield res.json();
+            if (res.ok) {
+                currentUser.points += points; // Menambahkan poin ke skor pemain
+                upoints.textContent = currentUser.points.toString();
+                const li = document.createElement('li');
+                li.textContent = `Word: ${word} | +${points} Points`;
+                wlist.appendChild(li);
+            }
+            else {
+                alert('Failed to update score');
+            }
+        }
+        else {
+            alert('Invalid word!');
+        }
+    });
+}
+// Event listener untuk tombol register
 document.getElementById('btn-register').addEventListener('click', register);
+// Event listener untuk tombol login
 document.getElementById('btn-login').addEventListener('click', login);
-document.getElementById('btn-submit').addEventListener('click', submitWord);
+// Event listener untuk tombol submit kata
+document.getElementById('btn-submit').addEventListener('click', updateScore);

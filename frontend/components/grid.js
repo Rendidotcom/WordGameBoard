@@ -1,16 +1,17 @@
-export function createGrid(rows = 6, cols = 5) {
-    const board = document.getElementById("game-board");
-    board.innerHTML = ''; // Clear board
-  
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const cell = document.createElement("div");
-        cell.classList.add("cell");
-        cell.contentEditable = true;
-        cell.dataset.row = r;
-        cell.dataset.col = c;
-        board.appendChild(cell);
-      }
-    }
+export function createGrid(rows, cols) {
+  const grid = document.createElement('div');
+  grid.style.display = 'grid';
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  grid.style.gap = '5px';
+
+  for (let i = 0; i < rows * cols; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell';
+    cell.style.width = '30px';
+    cell.style.height = '30px';
+    cell.style.border = '1px solid #ccc';
+    grid.appendChild(cell);
   }
-  
+
+  return grid;
+}

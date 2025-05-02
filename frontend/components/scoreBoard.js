@@ -1,11 +1,7 @@
-export function updateScoreBoard(players, currentTurnIndex) {
-    const scoreBoard = document.getElementById("score-board");
-    scoreBoard.innerHTML = "<h3>Skor</h3>";
-  
-    players.forEach((player, index) => {
-      const line = document.createElement("div");
-      line.textContent = `${player.name}: ${player.score} ${index === currentTurnIndex ? "(🟢 giliran)" : ""}`;
-      scoreBoard.appendChild(line);
-    });
-  }
-  
+export function updateScoreBoard(username, points) {
+  const nameSpan = document.getElementById('user-name');
+  const pointsSpan = document.getElementById('user-points');
+
+  if (nameSpan) nameSpan.textContent = username;
+  if (pointsSpan) pointsSpan.textContent = points.toString();
+}

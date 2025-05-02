@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+// Pastikan 'grid.ts' jika file tersebut TypeScript
 /**
  * Mengelola dan memperbarui papan permainan dengan huruf-huruf yang diketik oleh pemain.
  * Menyimpan posisi huruf di grid dan mengupdate tampilan papan permainan.

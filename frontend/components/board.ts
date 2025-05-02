@@ -1,4 +1,6 @@
-import { createGrid } from '..frontend\components\grid.ts'; // Pastikan 'grid.ts' jika file tersebut TypeScript
+import { createGrid } from './grid.js';
+
+ // Pastikan 'grid.ts' jika file tersebut TypeScript
 
 /**
  * Mengelola dan memperbarui papan permainan dengan huruf-huruf yang diketik oleh pemain.

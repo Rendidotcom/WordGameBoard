@@ -4,12 +4,55 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WordGameBoard</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    header {
+      background-color: #4a90e2;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
 </head>
 <body>
-  <div id="game-container">
-    <div id="score-board"></div>
-    <div id="game-board"></div>
+
+  <header>
+    <h1>WordGameBoard</h1>
+  </header>
+
+  <!-- Auth Section -->
+  <div id="auth" class="auth">
+    <h2>Register</h2>
+    <input id="reg-username" type="text" placeholder="Username" />
+    <input id="reg-email" type="email" placeholder="Email" />
+    <input id="reg-pass" type="password" placeholder="Password" />
+    <button id="btn-register">Register</button>
+
+    <h2>Login</h2>
+    <input id="log-email" type="email" placeholder="Email" />
+    <input id="log-pass" type="password" placeholder="Password" />
+    <button id="btn-login">Login</button>
+  </div>
+
+  <!-- Game Section -->
+  <div id="game" class="hidden">
+    <div class="container">
+      <h2>Welcome, <span id="user-name"></span>!</h2>
+
+      <div id="board-container"></div>
+
+      <div id="word-controls">
+        <input type="text" id="word-input" placeholder="Enter word..." />
+        <button id="btn-submit">Submit Word</button>
+      </div>
+
+      <div id="score-board">
+        <h3>Your Score: <span id="user-points">0</span></h3>
+        <ul id="word-list"></ul>
+      </div>
+    </div>
   </div>
 
   <script type="module" src="./script.js"></script>

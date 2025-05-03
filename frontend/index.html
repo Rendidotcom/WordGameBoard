@@ -8,6 +8,13 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h2>Welcome, <span id="userName">Nama</span>!</h2>
+    <button id="logoutBtn" style="padding: 5px 10px; background-color: crimson; color: white; border: none; border-radius: 5px; cursor: pointer;">
+      Logout
+    </button>
+  </div>
+
   <div id="auth">
     <h2>Register</h2>
     <input type="text" id="reg-username" placeholder="Username" />
@@ -24,12 +31,12 @@
   <div id="game" class="hidden">
     <h2>Welcome, <span id="user-name"></span>!</h2>
     <p>Points: <span id="user-points">0</span></p>
-    
+
     <div id="board-container"></div>
-    
+
     <input type="text" id="word-input" placeholder="Enter a word" />
     <button id="btn-submit">Submit</button>
-    
+
     <h3>Word List</h3>
     <ul id="word-list"></ul>
   </div>

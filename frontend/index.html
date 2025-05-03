@@ -52,6 +52,7 @@
     const upoints = document.getElementById('user-points');
     const wlist = document.getElementById('word-list');
     const wordInput = document.getElementById('word-input');
+    const logoutBtn = document.getElementById('logoutBtn');
 
     let currentUser = null;
 
@@ -167,9 +168,26 @@
       wordInput.value = '';
     }
 
+    // Logout functionality
+    function logout() {
+      // Sign out the user from supabase
+      supabase.auth.signOut();
+
+      // Reset current user and show the login form
+      currentUser = null;
+      authDiv.classList.remove('hidden');
+      gameDiv.classList.add('hidden');
+      document.getElementById('reg-username').value = '';
+      document.getElementById('reg-email').value = '';
+      document.getElementById('reg-pass').value = '';
+      document.getElementById('log-email').value = '';
+      document.getElementById('log-pass').value = '';
+    }
+
     document.getElementById('btn-register').addEventListener('click', register);
     document.getElementById('btn-login').addEventListener('click', login);
     document.getElementById('btn-submit').addEventListener('click', updateScore);
+    logoutBtn.addEventListener('click', logout); // Attach the logout event listener
   </script>
 </body>
 </html>

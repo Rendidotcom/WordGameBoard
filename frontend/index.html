@@ -1,128 +1,168 @@
-import { initBoard } from './components/board.js';
-import { updateScoreBoard } from './components/scoreBoard.js';
-import { supabase } from './supabaseClient.js';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word Game Board</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="auth">
+    <h2>Register</h2>
+    <input type="text" id="reg-username" placeholder="Username" />
+    <input type="email" id="reg-email" placeholder="Email" />
+    <input type="password" id="reg-pass" placeholder="Password" />
+    <button id="btn-register">Register</button>
 
-const authDiv = document.getElementById('auth');
-const gameDiv = document.getElementById('game');
-const uname = document.getElementById('user-name');
-const upoints = document.getElementById('user-points');
-const wlist = document.getElementById('word-list');
-const wordInput = document.getElementById('word-input');
+    <h2>Login</h2>
+    <input type="email" id="log-email" placeholder="Email" />
+    <input type="password" id="log-pass" placeholder="Password" />
+    <button id="btn-login">Login</button>
+  </div>
 
-let currentUser = null;
+  <div id="game" class="hidden">
+    <h2>Welcome, <span id="user-name"></span>!</h2>
+    <p>Points: <span id="user-points">0</span></p>
+    
+    <div id="board-container"></div>
+    
+    <input type="text" id="word-input" placeholder="Enter a word" />
+    <button id="btn-submit">Submit</button>
+    
+    <h3>Word List</h3>
+    <ul id="word-list"></ul>
+  </div>
 
-async function register() {
-  const username = document.getElementById('reg-username').value;
-  const email = document.getElementById('reg-email').value;
-  const password = document.getElementById('reg-pass').value;
+  <script type="module">
+    import { initBoard } from './components/board.js';
+    import { updateScoreBoard } from './components/scoreBoard.js';
+    import { supabase } from './supabaseClient.js';
 
-  if (!username || !email || !password) {
-    alert('All fields are required!');
-    return;
-  }
+    const authDiv = document.getElementById('auth');
+    const gameDiv = document.getElementById('game');
+    const uname = document.getElementById('user-name');
+    const upoints = document.getElementById('user-points');
+    const wlist = document.getElementById('word-list');
+    const wordInput = document.getElementById('word-input');
 
-  const { data, error } = await supabase.auth.signUp({ email, password });
+    let currentUser = null;
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+    async function register() {
+      const username = document.getElementById('reg-username').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-pass').value;
 
-  const userId = data.user?.id ?? data.session?.user.id;
+      if (!username || !email || !password) {
+        alert('All fields are required!');
+        return;
+      }
 
-  if (!userId) {
-    alert('User ID not found after registration.');
-    return;
-  }
+      const { data, error } = await supabase.auth.signUp({ email, password });
 
-  const { error: insertError } = await supabase
-    .from('ProfileScores')
-    .insert([{ id: userId, username, points: 0 }]);
+      if (error) {
+        alert(error.message);
+        return;
+      }
 
-  if (insertError) {
-    alert('Failed to save user profile: ' + insertError.message);
-    return;
-  }
+      const userId = data.user?.id ?? data.session?.user.id;
 
-  alert('Registration successful! Please log in.');
-}
+      if (!userId) {
+        alert('User ID not found after registration.');
+        return;
+      }
 
-async function login() {
-  const email = document.getElementById('log-email').value;
-  const password = document.getElementById('log-pass').value;
+      const { error: insertError } = await supabase
+        .from('ProfileScores')
+        .insert([{ id: userId, username, points: 0 }]);
 
-  if (!email || !password) {
-    alert('Both email and password are required!');
-    return;
-  }
+      if (insertError) {
+        alert('Failed to save user profile: ' + insertError.message);
+        return;
+      }
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      alert('Registration successful! Please log in.');
+    }
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+    async function login() {
+      const email = document.getElementById('log-email').value;
+      const password = document.getElementById('log-pass').value;
 
-  const userId = data.user?.id;
+      if (!email || !password) {
+        alert('Both email and password are required!');
+        return;
+      }
 
-  const { data: profile, error: profileError } = await supabase
-    .from('ProfileScores')
-    .select('*')
-    .eq('id', userId)
-    .single();
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-  if (profileError) {
-    alert('Failed to load profile: ' + profileError.message);
-    return;
-  }
+      if (error) {
+        alert(error.message);
+        return;
+      }
 
-  currentUser = profile;
-  startGame();
-}
+      const userId = data.user?.id;
 
-function startGame() {
-  authDiv.classList.add('hidden');
-  gameDiv.classList.remove('hidden');
-  uname.textContent = currentUser.username;
-  upoints.textContent = currentUser.points;
-  initBoard('board-container');
-}
+      const { data: profile, error: profileError } = await supabase
+        .from('ProfileScores')
+        .select('*')
+        .eq('id', userId)
+        .single();
 
-async function validateWord(word) {
-  const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-  return response.ok;
-}
+      if (profileError) {
+        alert('Failed to load profile: ' + profileError.message);
+        return;
+      }
 
-async function updateScore() {
-  if (!currentUser) return;
+      currentUser = profile;
+      startGame();
+    }
 
-  const word = wordInput.value.trim();
-  if (!word) return alert('Please enter a word');
+    function startGame() {
+      authDiv.classList.add('hidden');
+      gameDiv.classList.remove('hidden');
+      uname.textContent = currentUser.username;
+      upoints.textContent = currentUser.points;
+      initBoard('board-container');
+    }
 
-  const isValid = await validateWord(word);
-  if (!isValid) return alert('Invalid word!');
+    async function validateWord(word) {
+      const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+      return response.ok;
+    }
 
-  const points = word.length;
+    async function updateScore() {
+      if (!currentUser) return;
 
-  const { error } = await supabase
-    .from('ProfileScores')
-    .update({ points: currentUser.points + points })
-    .eq('id', currentUser.id);
+      const word = wordInput.value.trim();
+      if (!word) return alert('Please enter a word');
 
-  if (error) {
-    alert('Failed to update score: ' + error.message);
-    return;
-  }
+      const isValid = await validateWord(word);
+      if (!isValid) return alert('Invalid word!');
 
-  currentUser.points += points;
-  updateScoreBoard(currentUser.username, currentUser.points);
+      const points = word.length;
 
-  const li = document.createElement('li');
-  li.textContent = `Word: ${word} | +${points} Points`;
-  wlist.appendChild(li);
-  wordInput.value = '';
-}
+      const { error } = await supabase
+        .from('ProfileScores')
+        .update({ points: currentUser.points + points })
+        .eq('id', currentUser.id);
 
-document.getElementById('btn-register').addEventListener('click', register);
-document.getElementById('btn-login').addEventListener('click', login);
-document.getElementById('btn-submit').addEventListener('click', updateScore);
+      if (error) {
+        alert('Failed to update score: ' + error.message);
+        return;
+      }
+
+      currentUser.points += points;
+      updateScoreBoard(currentUser.username, currentUser.points);
+
+      const li = document.createElement('li');
+      li.textContent = `Word: ${word} | +${points} Points`;
+      wlist.appendChild(li);
+      wordInput.value = '';
+    }
+
+    document.getElementById('btn-register').addEventListener('click', register);
+    document.getElementById('btn-login').addEventListener('click', login);
+    document.getElementById('btn-submit').addEventListener('click', updateScore);
+  </script>
+</body>
+</html>

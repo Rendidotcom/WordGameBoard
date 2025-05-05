@@ -127,27 +127,30 @@
       initBoard('board-container');
     }
 
+    // Validasi kata dengan timeout dan fallback yang lebih aman
     async function validateWord(word) {
       try {
-        // timeout 5 detik
+        // Membuat controller untuk menangani abort
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // Timeout 5 detik
 
         const response = await fetch(
           `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
           { signal: controller.signal }
         );
-        clearTimeout(timeoutId);
+        clearTimeout(timeoutId); // Jika respons sudah diterima, hentikan timeout
         return response.ok;
       } catch (err) {
         console.error('Validation error:', err);
-        // fallback: anggap valid agar game tidak terhenti
+        // Jika ada kesalahan (misalnya request gagal), anggap kata valid agar game tidak berhenti
         return true;
       }
     }
 
+    // Fungsi untuk memperbarui skor pemain
     async function updateScore() {
       console.log("Submit clicked");
+
       if (!currentUser) {
         console.error("No current user.");
         return;
@@ -160,7 +163,7 @@
       }
 
       console.log("Validating:", word);
-      const isValid = await validateWord(word);
+      const isValid = await validateWord(word); // Validasi kata
       console.log("Word valid (with fallback):", isValid);
 
       if (!isValid) {
@@ -181,14 +184,14 @@
         return;
       }
 
-      currentUser.points += points;
-      upoints.textContent = currentUser.points;
-      updateScoreBoard(currentUser.username, currentUser.points);
+      currentUser.points += points; // Menambahkan poin pada pengguna
+      upoints.textContent = currentUser.points; // Memperbarui tampilan poin
+      updateScoreBoard(currentUser.username, currentUser.points); // Memperbarui papan skor
 
       const li = document.createElement('li');
       li.textContent = `Word: ${word} | +${points} Points`;
       wlist.appendChild(li);
-      wordInput.value = '';
+      wordInput.value = ''; // Mengosongkan input setelah submit
     }
 
     function logout() {

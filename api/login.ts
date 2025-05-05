@@ -4,8 +4,8 @@ import { createClient } from '@supabase/supabase-js'
 
 // Ganti dengan env aslimu jika belum
 const supabase = createClient(
-  process.env.SUPABASE_URL || 'https://your-project.supabase.co',
-  process.env.SUPABASE_ANON_KEY || 'your-anon-key'
+  process.env.SUPABASE_URL || 'https://tkckumxywpobbnklyhit.supabase.co',
+  process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrY2t1bXh5d3BvYmJua2x5aGl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUxOTg2MDAsImV4cCI6MjA2MDc3NDYwMH0.DjRa4HdiRwLqbeKEpWrNCgKDqS9iV1sKeA7q0G0n4VI'
 )
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

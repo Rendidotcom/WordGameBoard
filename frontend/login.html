@@ -84,7 +84,7 @@
         if (res.ok) {
           localStorage.setItem("username", data.username || email);
           alert("Login berhasil! Selamat datang.");
-          window.location.href = "/dashboard.html";
+          window.location.href = "/index.html";
         } else {
           alert(data.message || "Login gagal.");
         }

@@ -134,18 +134,29 @@
     }
 
     async function validateWord(word) {
-      const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-      return response.ok;
+      try {
+        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+        return response.ok;
+      } catch (err) {
+        console.error('Validation error:', err);
+        return false;
+      }
     }
 
     async function updateScore() {
       if (!currentUser) return;
 
-      const word = wordInput.value.trim();
-      if (!word) return alert('Please enter a word');
+      const word = wordInput.value.trim().toLowerCase();
+      if (!word) {
+        alert('Please enter a word');
+        return;
+      }
 
       const isValid = await validateWord(word);
-      if (!isValid) return alert('Invalid word!');
+      if (!isValid) {
+        alert('Invalid word!');
+        return;
+      }
 
       const points = word.length;
 
@@ -160,6 +171,7 @@
       }
 
       currentUser.points += points;
+      upoints.textContent = currentUser.points;
       updateScoreBoard(currentUser.username, currentUser.points);
 
       const li = document.createElement('li');
@@ -168,26 +180,26 @@
       wordInput.value = '';
     }
 
-    // Logout functionality
     function logout() {
-      // Sign out the user from supabase
       supabase.auth.signOut();
-
-      // Reset current user and show the login form
       currentUser = null;
       authDiv.classList.remove('hidden');
       gameDiv.classList.add('hidden');
-      document.getElementById('reg-username').value = '';
-      document.getElementById('reg-email').value = '';
-      document.getElementById('reg-pass').value = '';
-      document.getElementById('log-email').value = '';
-      document.getElementById('log-pass').value = '';
+
+      // Clear input fields
+      ['reg-username', 'reg-email', 'reg-pass', 'log-email', 'log-pass'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+
+      wlist.innerHTML = '';
+      wordInput.value = '';
+      upoints.textContent = '0';
     }
 
     document.getElementById('btn-register').addEventListener('click', register);
     document.getElementById('btn-login').addEventListener('click', login);
     document.getElementById('btn-submit').addEventListener('click', updateScore);
-    logoutBtn.addEventListener('click', logout); // Attach the logout event listener
+    logoutBtn.addEventListener('click', logout);
   </script>
 </body>
 </html>

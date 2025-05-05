@@ -67,14 +67,12 @@
       }
 
       const { data, error } = await supabase.auth.signUp({ email, password });
-
       if (error) {
         alert(error.message);
         return;
       }
 
       const userId = data.user?.id ?? data.session?.user.id;
-
       if (!userId) {
         alert('User ID not found after registration.');
         return;
@@ -83,7 +81,6 @@
       const { error: insertError } = await supabase
         .from('ProfileScores')
         .insert([{ id: userId, username, points: 0 }]);
-
       if (insertError) {
         alert('Failed to save user profile: ' + insertError.message);
         return;
@@ -102,20 +99,17 @@
       }
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
       if (error) {
         alert(error.message);
         return;
       }
 
       const userId = data.user?.id;
-
       const { data: profile, error: profileError } = await supabase
         .from('ProfileScores')
         .select('*')
         .eq('id', userId)
         .single();
-
       if (profileError) {
         alert('Failed to load profile: ' + profileError.message);
         return;
@@ -135,16 +129,29 @@
 
     async function validateWord(word) {
       try {
-        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+        // timeout 5 detik
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const response = await fetch(
+          `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+          { signal: controller.signal }
+        );
+        clearTimeout(timeoutId);
         return response.ok;
       } catch (err) {
         console.error('Validation error:', err);
-        return false;
+        // fallback: anggap valid agar game tidak terhenti
+        return true;
       }
     }
 
     async function updateScore() {
-      if (!currentUser) return;
+      console.log("Submit clicked");
+      if (!currentUser) {
+        console.error("No current user.");
+        return;
+      }
 
       const word = wordInput.value.trim().toLowerCase();
       if (!word) {
@@ -152,20 +159,24 @@
         return;
       }
 
+      console.log("Validating:", word);
       const isValid = await validateWord(word);
+      console.log("Word valid (with fallback):", isValid);
+
       if (!isValid) {
         alert('Invalid word!');
         return;
       }
 
       const points = word.length;
+      console.log("Updating points by:", points);
 
       const { error } = await supabase
         .from('ProfileScores')
         .update({ points: currentUser.points + points })
         .eq('id', currentUser.id);
-
       if (error) {
+        console.error('Update error:', error);
         alert('Failed to update score: ' + error.message);
         return;
       }
@@ -186,11 +197,9 @@
       authDiv.classList.remove('hidden');
       gameDiv.classList.add('hidden');
 
-      // Clear input fields
       ['reg-username', 'reg-email', 'reg-pass', 'log-email', 'log-pass'].forEach(id => {
         document.getElementById(id).value = '';
       });
-
       wlist.innerHTML = '';
       wordInput.value = '';
       upoints.textContent = '0';

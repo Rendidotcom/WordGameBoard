@@ -3,7 +3,7 @@ import { supabase } from './supabaseClient';
 
 export async function submitScore(word: string, points: number, userId: string) {
   const { data, error } = await supabase
-    .from('scores')
+    .from('Scores')
     .insert([{ word, points, user_id: userId }]);
 
   if (error) {

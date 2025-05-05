@@ -4,15 +4,99 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WordGameBoard</title>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="data:," type="image/x-icon" />
   <link rel="stylesheet" href="styles.css" />
 
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fa;
+      margin: 0;
+      padding: 0;
+    }
+
     header {
       background-color: #4a90e2;
       color: white;
       text-align: center;
       padding: 1rem;
+      margin-bottom: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #board-container {
+      display: grid;
+      grid-template-columns: repeat(5, 40px);
+      gap: 5px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    #board-container input {
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 20px;
+    }
+
+    #word-controls {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 15px 0;
+    }
+
+    #word-controls input {
+      flex: 1;
+    }
+
+    #score-board {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    #word-list {
+      padding-left: 20px;
     }
   </style>
 </head>
@@ -23,7 +107,7 @@
   </header>
 
   <!-- Auth Section -->
-  <div id="auth" class="auth">
+  <div id="auth" class="auth container">
     <h2>Register</h2>
     <input id="reg-username" type="text" placeholder="Username" />
     <input id="reg-email" type="email" placeholder="Email" />
@@ -39,7 +123,7 @@
   <!-- Game Section -->
   <div id="game" class="hidden">
     <div class="container">
-      <h2>Welcome, <span id="user-name"></span>!</h2>
+      <h2>Welcome, <span id="user-name">Player</span>!</h2>
 
       <div id="board-container"></div>
 

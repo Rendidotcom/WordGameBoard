@@ -53,15 +53,11 @@
     <div id="multi-container"></div>
   </div>
 
-  <!-- Supabase CDN ESM -->
+  <!-- SCRIPT -->
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-    const supabaseUrl = 'https://YOUR_PROJECT_ID.supabase.co';
-    const supabaseKey = 'YOUR_PUBLIC_ANON_KEY';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     import { initBoard } from './components/board.js';
     import { updateScoreBoard } from './components/scoreBoard.js';
+    import { supabase } from './supabaseClient.js';
     import './components/multiplayer.js';
 
     const authDiv = document.getElementById('auth');

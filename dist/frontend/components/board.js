@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 // Pastikan 'grid.ts' jika file tersebut TypeScript
 /**
  * Mengelola dan memperbarui papan permainan dengan huruf-huruf yang diketik oleh pemain.
@@ -78,28 +69,24 @@ export function createBoard(containerId, rows = 6, cols = 5) {
      * Fungsi untuk validasi kata dengan kamus (menggunakan dictionaryValidation.js)
      * Menampilkan hasil validasi (bisa digunakan untuk memperbarui skor)
      */
-    function checkValidWords(words) {
-        return __awaiter(this, void 0, void 0, function* () {
-            for (const word of words) {
-                const isValid = yield isValidEnglishWord(word); // Pastikan Anda memiliki fungsi ini
-                if (isValid) {
-                    console.log(`${word} adalah kata valid.`);
-                    // Tambahkan poin atau aksi sesuai validasi (misalnya update skor)
-                }
-                else {
-                    console.log(`${word} bukan kata valid.`);
-                }
+    async function checkValidWords(words) {
+        for (const word of words) {
+            const isValid = await isValidEnglishWord(word); // Pastikan Anda memiliki fungsi ini
+            if (isValid) {
+                console.log(`${word} adalah kata valid.`);
+                // Tambahkan poin atau aksi sesuai validasi (misalnya update skor)
             }
-        });
+            else {
+                console.log(`${word} bukan kata valid.`);
+            }
+        }
     }
     /**
      * Fungsi validasi kata (perlu implementasi atau menggunakan API eksternal)
      */
-    function isValidEnglishWord(word) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Implementasi atau API validasi kata
-            // Kembalikan true jika kata valid, false jika tidak
-            return true; // Hanya contoh, ganti dengan logika validasi yang benar
-        });
+    async function isValidEnglishWord(word) {
+        // Implementasi atau API validasi kata
+        // Kembalikan true jika kata valid, false jika tidak
+        return true; // Hanya contoh, ganti dengan logika validasi yang benar
     }
 }

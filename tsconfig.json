@@ -1,22 +1,22 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "ESNext",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
+    "target": "ES2020",                          // Lebih modern dari ES6
+    "module": "ESNext",                          // Gunakan ES modules (import/export)
+    "moduleResolution": "node",                 
+    "outDir": "dist",                            // Output hasil kompilasi
+    "rootDir": ".",                              // Akar dari semua source (frontend dan backend)
+    "strict": true,                              // Mode ketat
+    "esModuleInterop": true,                     // Agar kompatibel dengan require()
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "rootDir": "./",  // Change rootDir to the root directory if you're using both frontend and backend
-    "moduleResolution": "node",  // Ensure module resolution works for Node.js
-    "resolveJsonModule": true  // This helps when you import .json files
+    "skipLibCheck": true,
+    "resolveJsonModule": true                    // Agar bisa import file .json
   },
   "include": [
-    "backend/src/**/*",   // Include all files in the backend directory
-    "frontend/**/*"       // Include all files in the frontend directory
+    "backend/src/**/*.ts",                       // Sertakan semua TS di backend
+    "frontend/**/*.ts"                           // Sertakan semua TS di frontend
   ],
   "exclude": [
-    "dist",               // Exclude the dist folder
-    "node_modules"        // Exclude node_modules
+    "dist",                                      // Jangan kompilasi folder output
+    "node_modules"                               // Kecualikan dependensi
   ]
 }

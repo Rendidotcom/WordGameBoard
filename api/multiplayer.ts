@@ -1,10 +1,9 @@
 import { supabase } from './supabaseClient';
 
-let currentRoomId: string | undefined = undefined;
+let currentRoomId: string | null = null;
 let currentUserId: string = '';
 let username: string = '';
 
-// Ambil data user dari session
 async function initUser(): Promise<boolean> {
   const { data, error } = await supabase.auth.getUser();
   if (error || !data.user) {
@@ -14,22 +13,27 @@ async function initUser(): Promise<boolean> {
 
   currentUserId = data.user.id;
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('ProfileScores')
     .select('username')
     .eq('id', currentUserId)
     .single();
 
-  username = profile?.username || 'Unknown';
+  if (profileError || !profile) {
+    alert('Failed to fetch user profile.');
+    return false;
+  }
+
+  username = profile.username;
   return true;
 }
 
-// Create new room
 export async function createRoom(): Promise<string | undefined> {
   const ok = await initUser();
   if (!ok) return;
 
   const code = Math.random().toString(36).substring(2, 7).toUpperCase();
+
   const { data, error } = await supabase
     .from('Rooms')
     .insert([{ code }])
@@ -37,7 +41,7 @@ export async function createRoom(): Promise<string | undefined> {
     .single();
 
   if (error) {
-    console.error('Failed to create room:', error);
+    console.error('Failed to create room:', error.message);
     return;
   }
 
@@ -46,7 +50,6 @@ export async function createRoom(): Promise<string | undefined> {
   return code;
 }
 
-// Join existing room
 export async function joinRoom(code: string): Promise<string | undefined> {
   const ok = await initUser();
   if (!ok) return;
@@ -65,7 +68,12 @@ export async function joinRoom(code: string): Promise<string | undefined> {
   currentRoomId = room.id;
 
   await supabase.from('RoomPlayers').upsert([
-    { room_id: currentRoomId, user_id: currentUserId, username, points: 0 }
+    {
+      room_id: currentRoomId,
+      user_id: currentUserId,
+      username,
+      points: 0,
+    },
   ]);
 
   document.getElementById('room-name')!.textContent = code;
@@ -76,21 +84,21 @@ export async function joinRoom(code: string): Promise<string | undefined> {
   return code;
 }
 
-// Submit a word
 export async function submitWordMultiplayer(word: string) {
   if (!currentRoomId || !currentUserId) return;
 
-  const { error } = await supabase.from('RoomWords').insert([{
-    room_id: currentRoomId,
-    word,
-    user_id: currentUserId,
-    points: word.length
-  }]);
+  const { error } = await supabase.from('RoomWords').insert([
+    {
+      room_id: currentRoomId,
+      word,
+      user_id: currentUserId,
+      points: word.length,
+    },
+  ]);
 
-  if (error) console.error('Submit error:', error);
+  if (error) console.error('Failed to submit word:', error.message);
 }
 
-// Real-time update listener
 function subscribeToRoomUpdates() {
   if (!currentRoomId) return;
 
@@ -102,11 +110,11 @@ function subscribeToRoomUpdates() {
         event: 'INSERT',
         schema: 'public',
         table: 'RoomWords',
-        filter: `room_id=eq.${currentRoomId}`
+        filter: `room_id=eq.${currentRoomId}`,
       },
       (payload) => {
         const newWord = payload.new.word;
-        const user = payload.new.user_id;
+        const user = payload.new.username || payload.new.user_id;
         const points = payload.new.points;
 
         const li = document.createElement('li');
@@ -124,14 +132,13 @@ function subscribeToRoomUpdates() {
         event: '*',
         schema: 'public',
         table: 'RoomPlayers',
-        filter: `room_id=eq.${currentRoomId}`
+        filter: `room_id=eq.${currentRoomId}`,
       },
       () => loadPlayers()
     )
     .subscribe();
 }
 
-// Load player list
 async function loadPlayers() {
   if (!currentRoomId) return;
 
@@ -141,16 +148,16 @@ async function loadPlayers() {
     .eq('room_id', currentRoomId);
 
   if (error) {
-    console.error('Load players failed:', error);
+    console.error('Failed to load players:', error.message);
     return;
   }
 
   const list = document.getElementById('player-list');
   if (list) {
     list.innerHTML = '';
-    data.forEach((p) => {
+    data.forEach((player) => {
       const li = document.createElement('li');
-      li.textContent = `${p.username} (${p.points} pts)`;
+      li.textContent = `${player.username} (${player.points} pts)`;
       list.appendChild(li);
     });
   }

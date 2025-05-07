@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div style="display: flex; justify-content: space-between; align-items: center;">
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
     <h2>Welcome, <span id="userName">Nama</span>!</h2>
     <button id="logoutBtn" style="padding: 5px 10px; background-color: crimson; color: white; border: none; border-radius: 5px; cursor: pointer;">
       Logout
@@ -47,10 +47,10 @@
     <ul id="word-list"></ul>
   </div>
 
-  <!-- Multiplayer (Coming Soon) -->
+  <!-- Multiplayer -->
   <div id="multi-game" class="hidden">
-    <h2>Multiplayer Mode (Coming Soon)</h2>
-    <p>Multiplayer functionality will be added in the next step.</p>
+    <h2>Multiplayer Mode</h2>
+    <div id="multi-container"></div>
   </div>
 
   <!-- SCRIPT -->
@@ -58,6 +58,7 @@
     import { initBoard } from './components/board.js';
     import { updateScoreBoard } from './components/scoreBoard.js';
     import { supabase } from './supabaseClient.js';
+    import './components/multiplayer.js'; // pastikan file multiplayer.js sudah dikompilasi dari multiplayer.ts
 
     const authDiv = document.getElementById('auth');
     const modeDiv = document.getElementById('mode-selection');
@@ -153,18 +154,16 @@
 
     async function validateWord(word) {
       const englishWordPattern = /^[a-zA-Z]+$/;
-      if (!englishWordPattern.test(word)) {
-        return false;
-      }
+      if (!englishWordPattern.test(word)) return false;
 
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
-        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`, {
+        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`, {
           signal: controller.signal
         });
         clearTimeout(timeoutId);
-        return response.ok;
+        return res.ok;
       } catch (err) {
         console.error('Validation error:', err);
         return true;
